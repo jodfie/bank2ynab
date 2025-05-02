@@ -458,7 +458,6 @@ def fix_date(date_series: pd.Series, date_format: str) -> pd.Series:
     formatted_date_series = pd.to_datetime(
         date_series,
         format=date_format,
-        infer_datetime_format=True,
         errors="coerce",
     ).dt.strftime("%Y-%m-%d")
 

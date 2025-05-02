@@ -1,8 +1,9 @@
 import logging
 
-from .. import bank_handler
 import pandas as pd
 import pdfplumber
+
+from .. import bank_handler
 from ..bank_handler import BankHandler
 
 
@@ -64,17 +65,23 @@ def read_pdf_to_dataframe(
     # create empty dataframe
     combined_df = pd.DataFrame(columns=table_cols)
     # add each page's main table to the dataframe
+    dfs_to_add = list()
     for page in pdf.pages:
         table = page.extract_table()
+
         try:
             # get the main table for a page & set column names
             page_df = pd.DataFrame(table, columns=table_cols)
             # if the table has values, add it to the dataframe
             if not page_df.empty:
-                combined_df = combined_df.append(page_df, ignore_index=True)
+                dfs_to_add.append(page_df)
         except ValueError:
             # if the number of columns isn't right, ignore the table
             pass
+    # combine all the tables into one dataframe
+    if dfs_to_add:
+        # combine all the tables into one dataframe
+        combined_df = pd.concat(dfs_to_add, ignore_index=True)
     return combined_df
 
 

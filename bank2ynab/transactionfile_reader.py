@@ -125,7 +125,8 @@ def detect_encoding(filepath: str) -> str:
             logging.info(
                 f"\tOpening file using encoding {enc} (confidence {conf})"
             )
-            return enc
+            if enc:
+                return enc
 
     # because some encodings will happily encode anything even if wrong,
     # keeping the most common near the top should make it more likely that

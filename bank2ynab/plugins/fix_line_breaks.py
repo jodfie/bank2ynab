@@ -6,7 +6,7 @@ class FixLineBreaksPlugin(BankHandler):
         super().__init__(config_dict)
         self.name = "FixLineBreaks"
 
-    def _preprocess_file(self, file_path: str, plugin_args: list) -> str:
+    def _preprocess_file(self, file_path: str, plugin_args: list) -> None:
         """
         Remove all linebreaks followed by any character specified in
         plugin_args.
