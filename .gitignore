@@ -14,3 +14,4 @@ bank2ynab/workspace.code-workspace
 .AppleDouble
 .LSOverride
 .idea
+.venv/*
