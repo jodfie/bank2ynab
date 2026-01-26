@@ -244,7 +244,7 @@ def merge_duplicate_columns(
             # of the column name
             for dupe_count, key_col in enumerate(key_cols[1:]):
                 # add string version of each column onto the first column
-                df.iloc[:, key_cols[0]] += f"{df.iloc[:, key_col]} "
+                df.iloc[:, key_cols[0]] = df.iloc[:, key_cols[0]] + " " + df.iloc[:, key_col].astype(str)
                 # rename duplicate column
                 df.columns.values[key_col] = f"{key} {dupe_count}"
             # remove excess spaces
