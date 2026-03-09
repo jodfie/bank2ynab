@@ -34,7 +34,7 @@ if [ -f ""dist/*"" ]
       rm dist/*
 fi
 # do the actual work:
-get_input "Are you ready to BUILD the package?" "python setup.py bdist_wheel"
+get_input "Are you ready to BUILD the package?" "uv build"
 get_input "Are you ready to UPLOAD the package?" "twine upload --repository-url https://test.pypi.org/legacy/ dist/*"
 echo ""
 exit
