@@ -23,9 +23,10 @@ Steps to reproduce the behavior:
 4. ...
 
 **What's your software environment?**
- - Script language: Python 3.5, Python 2.7, other?
+ - Script language: Python 3.9+ (exact version)?
  - Operating system: Windows, Linux, MacOS?
  - OS version:
+ - Installation method: `pip install bank2ynab` or `uv sync`?
 
 **Can you provide other helpful information?**
 Add any other context about the problem here.

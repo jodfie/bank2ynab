@@ -1,26 +1,38 @@
-on: [pull_request]
 name: Update README
+
+on:
+  pull_request:
+    paths:
+      - "bank2ynab/**"
+      - "bank2ynab/data/**"
+      - "README.md"
+      - ".github/workflows/update_readme.yml"
+
+permissions:
+  contents: write
+
 jobs:
   update_readme:
     name: Update bank list
     runs-on: ubuntu-latest
-    
+
     steps:    
         - name: Check out Git repository
-          uses: actions/checkout@master
+          uses: actions/checkout@v4
           with:
             ref: ${{ github.event.pull_request.head.ref }}
         
         - name: Set up Python
-          uses: actions/setup-python@master
+          uses: actions/setup-python@v5
           with:
-            python-version: 3.8
-              
+            python-version: "3.12"
+               
         - name: Update README.md
           id: update_readme
           uses: bank2ynab/bank2ynab-update-readme@master
           
         - name: Commit and push changes
+          if: github.event.pull_request.head.repo.full_name == github.repository
           run: |
             git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git config --local user.name "github-actions[bot]"
