@@ -1,23 +1,56 @@
 import configparser
 import logging
 import os
+import shutil
 import typing
+from importlib import resources
+from pathlib import Path
+
+from platformdirs import user_config_dir
 
 
 class ConfigHandler:
     def __init__(self, *, user_mode: bool = False) -> None:
         self.user_mode = user_mode
 
-        path = os.path.realpath(__file__)
-        parent_dir = os.path.dirname(path)
-        project_dir = os.path.dirname(parent_dir)
-
-        self.bank_conf_path = os.path.join(project_dir, "bank2ynab.conf")
-        self.user_conf_path = os.path.join(
-            project_dir, "user_configuration.conf"
-        )
+        self.config_dir = self._resolve_config_dir()
+        self.bank_conf_path = str(self._resolve_bank_conf_path())
+        self.user_conf_path = str(self._resolve_user_conf_path())
 
         self.config = self.get_configs()
+
+    def _resolve_config_dir(self) -> Path:
+        env_path = os.getenv("BANK2YNAB_CONFIG_DIR")
+        if env_path:
+            return Path(env_path)
+        return Path(user_config_dir("bank2ynab", "bank2ynab"))
+
+    def _ensure_config_dir_exists(self) -> None:
+        self.config_dir.mkdir(parents=True, exist_ok=True)
+
+    def _copy_default_if_missing(
+        self, target_path: Path, packaged_file_name: str
+    ) -> None:
+        if target_path.exists():
+            return
+        self._ensure_config_dir_exists()
+        packaged_path = resources.files("bank2ynab.data").joinpath(
+            packaged_file_name
+        )
+        with resources.as_file(packaged_path) as source_path:
+            shutil.copyfile(str(source_path), str(target_path))
+
+    def _resolve_bank_conf_path(self) -> Path:
+        target_path = self.config_dir / "bank2ynab.conf"
+        self._copy_default_if_missing(target_path, "bank2ynab.conf")
+        return target_path
+
+    def _resolve_user_conf_path(self) -> Path:
+        target_path = self.config_dir / "user_configuration.conf"
+        self._copy_default_if_missing(
+            target_path, "user_configuration.conf.template"
+        )
+        return target_path
 
     def get_configs(self) -> configparser.RawConfigParser:
         """Retrieve all configuration parameters."""
