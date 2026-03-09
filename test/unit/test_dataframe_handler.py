@@ -67,6 +67,7 @@ class TestDataframeHandler(TestCase):
                     "Payee": ["four", "three", "two", "one"],
                 },
                 "input_cols": ["Amount", "Payee"],
+                "desired_column_output": ["four", "three", "two", "one"],
                 "desired_output": ["Amount", "Payee"],
             },
             {
@@ -77,6 +78,7 @@ class TestDataframeHandler(TestCase):
                     "Memo": ["four", "three", "two", "one"],
                 },
                 "input_cols": ["Amount", "Payee", "Payee"],
+                "desired_column_output":["four four", "three three", "two two", "one one"],
                 "desired_output": ["Amount", "Payee", "Payee 0"],
             },
         ]
@@ -92,6 +94,10 @@ class TestDataframeHandler(TestCase):
                 self.assertCountEqual(
                     test["desired_output"],
                     list(test_df),
+                )
+                self.assertCountEqual(
+                    test["desired_column_output"],
+                    test_df["Payee"]
                 )
 
     def test_add_missing_columns(self):
