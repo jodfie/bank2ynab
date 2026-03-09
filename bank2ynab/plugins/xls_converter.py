@@ -1,7 +1,8 @@
 import logging
 
-from .. import bank_handler
 from pandas import read_excel
+
+from .. import bank_handler
 from ..bank_handler import BankHandler
 
 
