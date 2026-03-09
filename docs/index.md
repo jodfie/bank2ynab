@@ -2,18 +2,15 @@
 ![YNAB banner image](https://b.thumbs.redditmedia.com/-4WEzT9WdhQV_khUidt56887E01btV8IILeL6TNvtvI.png)
 -->
 # bank2ynab
-
-This project consolidates other conversion efforts into one universal tool that easily converts and imports your bank's statements into YNAB.
-
-Development:
+[![Python testing](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml)
 [![GitHub issues by-label](https://img.shields.io/github/issues-raw/bank2ynab/bank2ynab/bug.svg)](https://github.com/bank2ynab/bank2ynab/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
 [![GitHub open issues](https://img.shields.io/github/issues-raw/bank2ynab/bank2ynab.svg)](https://github.com/bank2ynab/bank2ynab/issues)
 [![GitHub last commit](https://img.shields.io/github/last-commit/bank2ynab/bank2ynab.svg)](https://github.com/bank2ynab/bank2ynab/commits/develop)
 [![PRs welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/bank2ynab/bank2ynab/blob/develop/docs/CONTRIBUTING.md)
-[![Join the chat at https://gitter.im/bank2ynab/Lobby](https://badges.gitter.im/github-release-notes/Lobby.svg)](https://gitter.im/bank2ynab/Lobby)
 [![Lint: ruff](https://img.shields.io/badge/lint-ruff-46a2f1.svg)](https://github.com/astral-sh/ruff)
-[![Python testing](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml)
 [![Lint](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml)
+
+This project consolidates other conversion efforts into one universal tool that easily converts and imports your bank's statements into YNAB.
 
 - [What? (Features)](#what)
   - [Wish List](#wishlist)
@@ -251,4 +248,3 @@ Here is a list of the banks and their formats that we already support. Note that
 ----
 
 *Disclaimer: Please use at your own risk. This tool is neither officially supported by YNAB (the company) nor by YNAB (the software) in any way. Use of this tool could introduce problems into your budget that YNAB, through its official support channels, will not be able to troubleshoot or fix. See also the full [MIT licence](https://raw.githubusercontent.com/bank2ynab/bank2ynab/master/LICENSE).*
-
