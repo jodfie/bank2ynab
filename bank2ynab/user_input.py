@@ -21,7 +21,7 @@ def get_user_input(options: list, msg: str) -> str:
 def display_options(options: list):
     print("\n")
     for index, option in enumerate(options):
-        print(f"| {index+1} | {option[0]}")
+        print(f"| {index + 1} | {option[0]}")
 
 
 def get_int_input(min: int, max: int, msg: str) -> int:

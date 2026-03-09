@@ -1,8 +1,7 @@
 import logging
 from configparser import DuplicateSectionError, NoSectionError
 
-from . import api_interface
-from . import user_input
+from . import api_interface, user_input
 from .api_interface import APIInterface
 from .config_handler import ConfigHandler
 
@@ -216,9 +215,9 @@ def apply_mapping(
             transaction["account_id"] = account_id
         # add transaction list into entry for relevant budget
         if budget_id in budget_transaction_dict:
-            budget_transaction_dict[budget_id][
-                "transactions"
-            ] += account_transactions
+            budget_transaction_dict[budget_id]["transactions"] += (
+                account_transactions
+            )
         else:
             budget_transaction_dict.setdefault(
                 budget_id, {"transactions": account_transactions}

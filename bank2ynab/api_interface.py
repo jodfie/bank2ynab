@@ -1,6 +1,7 @@
 import logging
 
 import requests
+
 from .ynab_api_response import YNABError
 
 
@@ -144,4 +145,5 @@ def get_budgets(
     :rtype: dict[str, dict[str, str]]
     """
     budgets = api_read(api_token=api_token, budget_id="", keyword="budgets")
+    return fix_id_based_dicts(budgets)
     return fix_id_based_dicts(budgets)

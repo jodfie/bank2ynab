@@ -4,8 +4,7 @@ import traceback
 from os import path
 from typing import Any
 
-from . import dataframe_handler
-from . import transactionfile_reader
+from . import dataframe_handler, transactionfile_reader
 from .dataframe_handler import DataframeHandler
 
 
