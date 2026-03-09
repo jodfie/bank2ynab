@@ -9,6 +9,7 @@ A common project to consolidate all conversion efforts from various banks' expor
 - [Installation Instructions](#install)
   - [Requirements](#requirements)
 - [User Guide](#userguide)
+- [YNAB API Import](#api)
 - [Known Bugs](#knownbugs)
 - [List of Supported Banks](#formats)
 
@@ -46,15 +47,21 @@ There are currently more than 80 GitHub projects related to YNAB converter scrip
 
 ## <a name="install"></a>Installation Instructions
 
-- Download [this ZIP file](https://github.com/bank2ynab/bank2ynab/archive/master.zip)
-- Note the [Requirements](#requirements) for additional details!
-- When you're done, refer to the [User Guide](#userguide) below.
+- Install from PyPI: `pip install bank2ynab`
+- Or install from source:
+  - `git clone https://github.com/bank2ynab/bank2ynab.git`
+  - `cd bank2ynab`
+  - `uv sync`
+- Then follow the [User Guide](#userguide) below.
 
 ### <a name="requirements"></a>Requirements
 
 - Windows or Mac or Linux
-- Python v3.5+ installed ([download it from python.org](https://www.python.org/downloads/)) (Python v2.7 *might* work but we make no promises; Py2 has end-of-life on 01Jan2020.)
+- Python v3.9+ installed ([download it from python.org](https://www.python.org/downloads/))
 - Support for other scripting languages may follow. Contributions are welcome!
+
+Troubleshooting:
+- If you see `RequestsDependencyWarning` about `urllib3/chardet/charset_normalizer`, resync the environment with `uv sync --reinstall`.
 
 ## <a name="userguide"></a>User Guide
 
@@ -63,20 +70,31 @@ Using `bank2ynab` is easy:
 1. Download some bank statements from your banking website.
    - Make sure to choose CSV format. Save with the default suggested filename so that the converter can find it.
    - It's okay if the statements contain data that you already have in YNAB. YNAB will detect and skip these.
-1. Check the `[DEFAULT]` configuration in `user_configuration.conf`. *You only need to do this once.* Specifically:
-   - `Source Path = c:\users\example-username\Downloads` Specify where you save your downloaded CSV files.
-   - `Delete Source File = True` set to `False` if you want to keep the original CSV you downloaded.
-1. Check that the configuration in `bank2ynab.conf` contains a `[SECTION]` for your banking format. *You only need to do this once per bank you use.* If you can't find your bank in the config, [tell us your bank's format](https://goo.gl/forms/b7SNwTxmQFfnXlMf2) and we can add it to the project.
-1. Run the `bank2ynab.py` conversion script to generate the YNAB-ready CSV output file. How to do this depends on your operating system:
-   - Windows: Open a command prompt, navigate to the script directory, and run the command `python bank2ynab.py`.
-     - Pro tip: Create a program shortcut! Right-click on the `bank2ynab.bat` file, choose *Send to* and then choose *Desktop (create shortcut)*. Now you can just double-click that shortcut!
-   - Linux/Mac: Open a terminal, navigate to the script directory, and run the command `python3 ./bank2ynab.py`.
-     - *Important:* Be sure to use `python3` specifically, and not `python` or `python2` which is probably the system default.
- 1. Depending on your configuration, the conversion script will now import your files into YNAB automatically, or you can add the files manually:
-    - **Automatic import** (when you have provided [your YNAB API access token](https://github.com/bank2ynab/bank2ynab/wiki/Create-your-YNAB-API-access-token): 
-      - The conversion script will now ask you which budget it should use to import your converted CSV file to (if you have multiple). It will also ask you which account inside the budget to use (if you have multiple); you'll only have to answer this question once.
-    - **Manually drag-and-drop** the converted CSV file onto the YNAB web app:
-      - YNAB will detect this and offer you import options. If you had already switched YNAB to the corresponding account view, YNAB will understand that you want to import this file to this account.
+1. Run `bank2ynab` once to generate default config files in your user config directory (`BANK2YNAB_CONFIG_DIR` if set, otherwise the OS default for `bank2ynab`).
+1. Check the `[DEFAULT]` configuration in `user_configuration.conf`.
+   - `Source Path = c:\users\example-username\Downloads`
+   - `Delete Source File = True` or `False`
+1. Check that `bank2ynab.conf` contains a `[SECTION]` for your bank format.
+1. Run the converter:
+   - If installed from PyPI: `bank2ynab`
+   - If running from source: `uv run bank2ynab`
+1. If API upload is not configured, import the output CSV manually in YNAB.
+
+## <a name="api"></a>YNAB API Import
+
+1. Create a Personal Access Token in YNAB (`My Account` -> `Developer Settings` -> `Personal Access Tokens`).
+1. Open `user_configuration.conf` and set `YNAB API Access Token = <your_token>`.
+1. Run `bank2ynab`.
+1. On first API run for each bank section, choose budget and account.
+1. The mapping is saved as `YNAB Account ID = <budget_id>||<account_id>`.
+
+Notes:
+- Config location:
+  - `BANK2YNAB_CONFIG_DIR` if set.
+  - Otherwise your OS default user config directory for `bank2ynab`.
+- Root-level config files in the project directory are no longer used.
+- If `Save YNAB Account = True`, mapping is reused automatically.
+- If token is blank, API upload is skipped and output remains CSV-based.
 
 ## <a name="knownbugs"></a>Known Bugs
 
@@ -162,3 +180,4 @@ Here is a list of the banks and their formats that we already support. Note that
 ----
 
 *Disclaimer: Please use at your own risk. This tool is neither officially supported by YNAB (the company) nor by YNAB (the software) in any way. Use of this tool could introduce problems into your budget that YNAB, through its official support channels, will not be able to troubleshoot or fix. See also the full [MIT licence](https://raw.githubusercontent.com/bank2ynab/bank2ynab/master/LICENSE).*
+
