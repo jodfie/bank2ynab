@@ -20,6 +20,7 @@ This project consolidates other conversion efforts into one universal tool that 
   - [Requirements](#requirements)
 - [User Guide](#userguide)
 - [YNAB API Import](#api)
+- [Contributors](#contributors)
 - [Known Bugs](#knownbugs)
 - [List of Supported Banks](#formats)
 
@@ -110,6 +111,10 @@ Notes:
 - If `Save YNAB Account = True`, account mapping is reused automatically.
 - If token is blank, API upload is skipped and output remains CSV-based.
 - Keep your token private.
+
+## <a name="contributors"></a>Contributors
+
+[![Contributors](https://contrib.rocks/image?repo=bank2ynab/bank2ynab)](https://github.com/bank2ynab/bank2ynab/graphs/contributors)
 
 ## <a name="knownbugs"></a>Known Bugs
 

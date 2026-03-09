@@ -19,7 +19,7 @@ htmlcov/
 .hypothesis/
 .coverage*
 # local tooling
-.venv/
+.venv
 # vscode stuff
 bank2ynab/workspace.code-workspace
 .vscode
