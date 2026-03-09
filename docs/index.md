@@ -1,6 +1,19 @@
+<!-- I thought about adding some graphics for a better appearance, but it is too large and dominates the page:
+![YNAB banner image](https://b.thumbs.redditmedia.com/-4WEzT9WdhQV_khUidt56887E01btV8IILeL6TNvtvI.png)
+-->
 # bank2ynab
 
-A common project to consolidate all conversion efforts from various banks' export formats into YNAB's import format.
+This project consolidates other conversion efforts into one universal tool that easily converts and imports your bank's statements into YNAB.
+
+Development:
+[![GitHub issues by-label](https://img.shields.io/github/issues-raw/bank2ynab/bank2ynab/bug.svg)](https://github.com/bank2ynab/bank2ynab/issues?q=is%3Aissue+is%3Aopen+label%3Abug)
+[![GitHub open issues](https://img.shields.io/github/issues-raw/bank2ynab/bank2ynab.svg)](https://github.com/bank2ynab/bank2ynab/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/bank2ynab/bank2ynab.svg)](https://github.com/bank2ynab/bank2ynab/commits/develop)
+[![PRs welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/bank2ynab/bank2ynab/blob/develop/docs/CONTRIBUTING.md)
+[![Join the chat at https://gitter.im/bank2ynab/Lobby](https://badges.gitter.im/github-release-notes/Lobby.svg)](https://gitter.im/bank2ynab/Lobby)
+[![Lint: ruff](https://img.shields.io/badge/lint-ruff-46a2f1.svg)](https://github.com/astral-sh/ruff)
+[![Python testing](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml)
+[![Lint](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml)
 
 - [What? (Features)](#what)
   - [Wish List](#wishlist)
@@ -45,10 +58,10 @@ There are currently more than 80 GitHub projects related to YNAB converter scrip
 - Join the chat over at https://gitter.im/bank2ynab/Lobby
 - See also: [the wiki](https://github.com/bank2ynab/bank2ynab/wiki), perhaps most importantly [this page about import formats](https://github.com/bank2ynab/bank2ynab/wiki/ImportFormats).
 
-## <a name="install"></a>Installation Instructions
+## <a name=install></a>Installation Instructions
 
 - Install from PyPI: `pip install bank2ynab`
-- Or install from source:
+- Or install from source (recommended for contributors):
   - `git clone https://github.com/bank2ynab/bank2ynab.git`
   - `cd bank2ynab`
   - `uv sync`
@@ -71,9 +84,9 @@ Using `bank2ynab` is easy:
    - Make sure to choose CSV format. Save with the default suggested filename so that the converter can find it.
    - It's okay if the statements contain data that you already have in YNAB. YNAB will detect and skip these.
 1. Run `bank2ynab` once to generate default config files in your user config directory (`BANK2YNAB_CONFIG_DIR` if set, otherwise the OS default for `bank2ynab`).
-1. Check the `[DEFAULT]` configuration in `user_configuration.conf`.
-   - `Source Path = c:\users\example-username\Downloads`
-   - `Delete Source File = True` or `False`
+1. Check the `[DEFAULT]` configuration in `user_configuration.conf`. You only need to do this once.
+   - `Source Path = c:\users\example-username\Downloads` sets where downloaded CSV files are read from.
+   - `Delete Source File = True` can be set to `False` if you want to keep originals.
 1. Check that `bank2ynab.conf` contains a `[SECTION]` for your bank format.
 1. Run the converter:
    - If installed from PyPI: `bank2ynab`
@@ -82,19 +95,24 @@ Using `bank2ynab` is easy:
 
 ## <a name="api"></a>YNAB API Import
 
+Use this section if you want `bank2ynab` to upload transactions directly to YNAB.
+
 1. Create a Personal Access Token in YNAB (`My Account` -> `Developer Settings` -> `Personal Access Tokens`).
 1. Open `user_configuration.conf` and set `YNAB API Access Token = <your_token>`.
-1. Run `bank2ynab`.
-1. On first API run for each bank section, choose budget and account.
-1. The mapping is saved as `YNAB Account ID = <budget_id>||<account_id>`.
+1. Run `bank2ynab` again.
+1. On first API run for each bank section, choose:
+   - Budget
+   - Account
+1. The selected mapping is stored as `YNAB Account ID = <budget_id>||<account_id>` in your user config.
 
 Notes:
 - Config location:
   - `BANK2YNAB_CONFIG_DIR` if set.
   - Otherwise your OS default user config directory for `bank2ynab`.
 - Root-level config files in the project directory are no longer used.
-- If `Save YNAB Account = True`, mapping is reused automatically.
+- If `Save YNAB Account = True`, account mapping is reused automatically.
 - If token is blank, API upload is skipped and output remains CSV-based.
+- Keep your token private.
 
 ## <a name="knownbugs"></a>Known Bugs
 
@@ -103,76 +121,129 @@ For details, please see our [issue list labeled "Bug"](https://github.com/bank2y
 ## <a name="formats"></a>List of Supported Banks
 
 Here is a list of the banks and their formats that we already support. Note that we have many [more formats in the pipeline](https://github.com/bank2ynab/bank2ynab/issues?q=is%3Aopen+is%3Aissue+label%3A%22bank+format%22) so the list continues to grow, and we are happy to receive [requests](https://goo.gl/forms/b7SNwTxmQFfnXlMf2). In alphabetical order (country and bank):
-
+<!--AUTO BANK UPDATE START-->
 1. AT easybank credit card
-1. AT Raiffeisen Bank 2018 checking
+1. AT Raiffeisen Bank 2018
+1. AT Raiffeisen Bank RCM
 1. AT Raiffeisen Bank 2019 checking
-1. AT Raiffeisen Bank VISA card
+1. AT Raiffeisen Bank 2021 checking
+1. AT Raiffeisen VISA
+1. AU ANZ
+1. AU ING
+1. AU National Australia Bank
+1. BE BNP Paribas Fortis old
+1. BE BNP Paribas Fortis Export
 1. BE KBC checking
-1. BE BE Keytrade Bank
-1. BR Banco do Brasil checking
-1. BR Inter checking
+1. BE KBC credit
+1. BE Keytrade Bank
+1. BR Banco Bradesco Checking
+1. BR Banco do Brasil, checking
+1. BR Inter, checking
 1. CA TD Canada Trust, checking+Visa
-1. CH Zürcher Kantonalbank, Kontoauszug
-1. , Finanzassistent
+1. CH UBS Checking account
+1. CH UBS Checking account - Alternative 1
+1. CH UBS Credit card
+1. CH Neon Monthly Account Statement
+1. CH Neon Yearly Account Statement
+1. CH SwissCard
+1. CH ZKB Erweiterte Suche
+1. CH ZKB Finanzassistent-Chronik
+1. CO Bancolombia
+1. Crypto.com
 1. CZ AirBank checking and savings
 1. CZ Ceska Sporitelna
 1. CZ Raiffeisen bank
+1. DE Amazon VISA LBB
 1. DE Commerzbank checking
 1. DE Consorsbank checking
 1. DE Deutsche Bank
+1. DE Deutsche Bank Credit Card
 1. DE Deutsche Kreditbank checking
+1. DE Deutsche Kreditbank checking new
 1. DE Deutsche Kreditbank credit card
+1. DE Fiducia (Volksbank, Sparda-Bank, BBBank, PSD Bank, Raiffeisen, ...)
 1. DE ING-DiBa
 1. DE Kreissparkasse
 1. DE N26
 1. DE Ostseesparkasse Rostock checking
 1. DE Ostseesparkasse Rostock credit card
 1. DE Sparkasse Rhein-Neckar-Nord
+1. DE Sparkasse Südholstein
 1. DK Bankernes EDB Central
+1. DK Danske Bank
 1. DK Jyske Bank VISA
 1. DK Nordea
-1. DK Sparkassen Thy
+1. DK Portalbank
+1. Hibiscus banking software
 1. HU Erste Bank checking
+1. HU K&H
+1. HU OTP
 1. IE AIB Ireland
 1. IE Bank of Ireland
+1. IE First South Credit Union
 1. IE N26
 1. IE Ulster Bank, savings
+1. IT RomagnaBanca Inbank
+1. LV Swedbank
+1. Mint
 1. MV Bank of Maldives, checking
+1. NETELLER
+1. NL American Express (AMEX)
 1. NL Bunq checking
 1. NL bunqDesktop software
-1. NL ING Bank
-1. NL Rabobank (2017 format)
-1. NL Rabobank (2018 format)
+1. NL bunqDesktop software 2
+1. NL ING
+1. NL ING Checking 2020
+1. NL KNAB
+1. NL Rabobank
+1. NL Rabobank-2018
+1. NL RegioBank
+1. NL Rabobank Credit Card
 1. NO DNB
 1. NO Sparebank 1 VISA
-1. PL mBank, checking
+1. Personal Capital
+1. PL Alior Bank
+1. PL mBank
+1. PL PKO BP
+1. PL Bank Pekao
+1. Revolut
 1. SE Handelsbanken
 1. SE Länsförsäkringar checking
-1. SE Nordea
-1. SE SEB, Skandinaviska Enskilda Banken
+1. SE Morrow Bank
+1. SE Nordea - internetbanken.privat.nordea.se
+1. SE Nordea - netbank.nordea.se
+1. SE SEB Skandinaviska Enskilda Banken
 1. SE Sparbanken Tanum
 1. SE Swedbank
-1. SE Swedbank (2019 format)
-1. SE OCBC Bank
+1. SE Swedbank 2019
+1. SE Swedbank 2020
+1. SG HSBC Savings Account
+1. SG HSBC Credit Card
+1. SG OCBC Bank
+1. SG OCBC Bank Credit Card
 1. SG POSB savings
+1. SG UOB Savings Account
+1. SG UOB Credit Card
 1. SK Tatra Banka
 1. SK VUB
+1. UK Co-operative Bank
+1. UK Monzo checking
 1. UK Barclaycard credit card
 1. UK Barclaycard Business Credit Card
-1. UK Co-operative Bank
 1. UK first direct checking
-1. UK Monzo checking
+1. UK John Lewis Partnership Card (Pre-2022 Format)
+1. UK John Lewis Partnership Card (NewDay Format)
 1. US Bank of America
 1. US Bank of America Credit Card
 1. US BB&T
-1. US Chase Credit Card
-1. US Schwab
+1. US Chase Credit Card 2017
+1. US Chase Credit Card 2019
+1. US Schwab Checking
+1. US Schwab Savings
 1. US TB Bank
-1. (software) Mint
-1. (software) Neteller
-1. (software) Personal Capital
-
+1. US USAA
+1. Wise
+<!--AUTO BANK UPDATE END-->
 ----
 
 [![XKCD on standards: Fortunately, the charging one has been solved now that we've all standardized on mini-USB. Or is it micro-USB? Shit.](https://imgs.xkcd.com/comics/standards.png)](https://xkcd.com/927/)
