@@ -1,6 +1,11 @@
 name: Lint
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   lint:
@@ -8,11 +13,5 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
-      - name: Sync dependencies
-        run: uv sync
-      - name: Run black
-        run: uv run black --check .
+      - name: Run ruff (critical checks)
+        run: uvx ruff check . --select F,E9,I --output-format=github

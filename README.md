@@ -11,7 +11,7 @@ Development:
 [![GitHub last commit](https://img.shields.io/github/last-commit/bank2ynab/bank2ynab.svg)](https://github.com/bank2ynab/bank2ynab/commits/develop)
 [![PRs welcome!](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com/bank2ynab/bank2ynab/blob/develop/docs/CONTRIBUTING.md)
 [![Join the chat at https://gitter.im/bank2ynab/Lobby](https://badges.gitter.im/github-release-notes/Lobby.svg)](https://gitter.im/bank2ynab/Lobby)
-[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Lint: ruff](https://img.shields.io/badge/lint-ruff-46a2f1.svg)](https://github.com/astral-sh/ruff)
 [![Python testing](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/testing.yml)
 [![Lint](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml/badge.svg?branch=develop)](https://github.com/bank2ynab/bank2ynab/actions/workflows/codestyle.yml)
 

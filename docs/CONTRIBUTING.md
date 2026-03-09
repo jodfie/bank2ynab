@@ -108,6 +108,7 @@ Start reading our code and you'll get the hang of it.
 * We optimize for readability.
 * We indent using four spaces (soft tabs).
 * We use GitHub Actions for automated testing. Keep workflows green before merging.
+* We use Ruff for linting. Run `uvx ruff check . --select F,E9,I` before opening a PR.
 * This is open source software. Consider the people who will read your code, and make it look nice for them.
 * (More to be added later?)
 

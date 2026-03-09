@@ -43,11 +43,9 @@ bank2ynab = "bank2ynab.__main__:main"
 [dependency-groups]
 dev = [
   "bandit>=1.7.1",
-  "black>=21.12b0",
-  "flake8>=4.0.1",
-  "isort>=5.10.1",
   "pydocstyle>=6.1.1",
   "pyupgrade>=2.31.1",
+  "ruff>=0.8.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -56,8 +54,6 @@ packages = ["bank2ynab"]
 [tool.uv]
 default-groups = ["dev"]
 
-[tool.black]
+[tool.ruff]
 line-length = 79
-
-[tool.isort]
-profile = "black"
+target-version = "py39"
