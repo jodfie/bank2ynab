@@ -395,7 +395,7 @@ def auto_memo(df: pd.DataFrame, fill_memo: bool) -> pd.DataFrame:
     :rtype: pd.DataFrame
     """
     if fill_memo:
-        df["Memo"].fillna(df["Payee"], inplace=True)
+        df["Memo"] = df["Memo"].fillna(df["Payee"])
     return df
 
 
@@ -408,7 +408,7 @@ def auto_payee(df: pd.DataFrame) -> pd.DataFrame:
     :return: modified dataframe
     :rtype: pd.DataFrame
     """
-    df["Payee"].fillna(df["Memo"], inplace=True)
+    df["Payee"] = df["Payee"].fillna(df["Memo"])
     return df
 
 
@@ -478,10 +478,8 @@ def fill_empty_dates(date_series: pd.Series, fill_dates: bool) -> pd.Series:
     :rtype: pd.Series
     """
     if fill_dates:
-        date_series.replace(
-            r"^\s*$", pd.NA, regex=True, inplace=True  # type:ignore
-        )
-        date_series.fillna(method="ffill", inplace=True)  # type:ignore
+        date_series = date_series.replace(r"^\s*$", pd.NA, regex=True)
+        date_series = date_series.ffill()
 
     return date_series
 
