@@ -298,6 +298,24 @@ class TestDataframeHandler(TestCase):
         del test_df["index"]
         pandas.testing.assert_frame_equal(desired_output, test_df, False)
 
+    def test_remove_invalid_rows_with_string_dtype_columns(self):
+        initial_df = pd.DataFrame(
+            {
+                "Inflow": [10, NA],
+                "Outflow": [0, 0],
+                "amount": [10, 0],
+                "Payee": pd.Series(["a", NA], dtype="string"),
+                "Memo": pd.Series([NA, "flag"], dtype="string"),
+                "Date": pd.Series(["2017-09-28", "2017-09-29"], dtype="string"),
+            }
+        )
+
+        test_df = remove_invalid_rows(initial_df)
+
+        self.assertEqual(len(test_df), 1)
+        self.assertEqual(test_df.iloc[0]["Payee"], "a")
+        self.assertTrue(pd.isna(test_df.iloc[0]["Memo"]))
+
     def test_auto_memo(self):
         """Test auto-filling of memo field with payee if allowed."""
         # TODO establish if it's even possible for an empty string to
