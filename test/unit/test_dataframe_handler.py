@@ -69,6 +69,7 @@ class TestDataframeHandler(TestCase):
                 "input_cols": ["Amount", "Payee"],
                 "desired_column_output": ["four", "three", "two", "one"],
                 "desired_output": ["Amount", "Payee"],
+                "merged_column": "Payee",
             },
             {
                 # test two duplicate columns
@@ -80,6 +81,19 @@ class TestDataframeHandler(TestCase):
                 "input_cols": ["Amount", "Payee", "Payee"],
                 "desired_column_output":["four four", "three three", "two two", "one one"],
                 "desired_output": ["Amount", "Payee", "Payee 0"],
+                "merged_column": "Payee",
+            },
+            {
+                # test duplicate numeric columns with NaN values
+                "data": {
+                    "Date": ["2024-01-01", "2024-01-02"],
+                    "skip": [float("nan"), float("nan")],
+                    "Memo": [float("nan"), "flagged"],
+                },
+                "input_cols": ["Date", "skip", "skip"],
+                "desired_column_output": ["", "flagged"],
+                "desired_output": ["Date", "skip", "skip 0"],
+                "merged_column": "skip",
             },
         ]
         for test in test_dfs:
@@ -97,7 +111,7 @@ class TestDataframeHandler(TestCase):
                 )
                 self.assertCountEqual(
                     test["desired_column_output"],
-                    test_df["Payee"]
+                    test_df[test["merged_column"]]
                 )
 
     def test_add_missing_columns(self):

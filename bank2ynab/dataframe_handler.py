@@ -238,23 +238,27 @@ def merge_duplicate_columns(
     for key in cols_to_merge:
         key_cols: list[int] = cols_to_merge[key]
         if len(key_cols) > 1:
-            # change first column to string
-            df.iloc[:, key_cols[0]] = df.iloc[:, key_cols[0]].astype(str) + " "
+            # Build the merged values separately, then replace the column in one
+            # step so pandas does not try to coerce strings back into float dtype.
+            merged_col = df.iloc[:, key_cols[0]].fillna("").astype(str)
             # merge every duplicate column into the 1st instance
             # of the column name
             for dupe_count, key_col in enumerate(key_cols[1:]):
                 # add string version of each column onto the first column
-                df.iloc[:, key_cols[0]] = (
-                    df.iloc[:, key_cols[0]]
+                merged_col = (
+                    merged_col
                     + " "
-                    + df.iloc[:, key_col].astype(str)
+                    + df.iloc[:, key_col].fillna("").astype(str)
                 )
                 # rename duplicate column
                 df.columns.values[key_col] = f"{key} {dupe_count}"
-            # remove excess spaces
-            df[key] = (
-                df[key].str.replace("\\s{2,}", " ", regex=True).str.strip()
+            df.isetitem(
+                key_cols[0],
+                merged_col.str.replace(
+                    "\\s{2,}", " ", regex=True
+                ).str.strip().to_numpy(),
             )
+            # remove excess spaces
 
     logging.debug(f"\nAfter duplicate merge\n{df.head()}")
     return df
