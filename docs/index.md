@@ -81,8 +81,12 @@ Using `bank2ynab` is easy:
 1. Download some bank statements from your banking website.
    - Make sure to choose CSV format. Save with the default suggested filename so that the converter can find it.
    - It's okay if the statements contain data that you already have in YNAB. YNAB will detect and skip these.
-1. Run `bank2ynab` once to generate default config files in your user config directory (`BANK2YNAB_CONFIG_DIR` if set, otherwise the OS default for `bank2ynab`).
-1. Check the `[DEFAULT]` configuration in `user_configuration.conf`. You only need to do this once.
+1. Run `bank2ynab` once to generate default config files.
+   - `user_configuration.conf` is read from `BANK2YNAB_CONFIG_DIR` if that environment variable is set.
+   - Otherwise it is read from your OS user config directory for `bank2ynab`.
+   - On Windows, that is typically `%LOCALAPPDATA%\bank2ynab\bank2ynab\user_configuration.conf`.
+   - Example: `C:\Users\YourName\AppData\Local\bank2ynab\bank2ynab\user_configuration.conf`
+1. Check the `[DEFAULT]` configuration in that `user_configuration.conf` file. You only need to do this once.
    - `Source Path = c:\users\example-username\Downloads` sets where downloaded CSV files are read from.
    - `Delete Source File = True` can be set to `False` if you want to keep originals.
 1. Check that `bank2ynab.conf` contains a `[SECTION]` for your bank format.
@@ -107,6 +111,8 @@ Notes:
 - Config location:
   - `BANK2YNAB_CONFIG_DIR` if set.
   - Otherwise your OS default user config directory for `bank2ynab`.
+- Windows example:
+  - `%LOCALAPPDATA%\bank2ynab\bank2ynab\user_configuration.conf`
 - Root-level config files in the project directory are no longer used.
 - If `Save YNAB Account = True`, account mapping is reused automatically.
 - If token is blank, API upload is skipped and output remains CSV-based.
