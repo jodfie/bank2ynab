@@ -33,7 +33,7 @@ class YNAB_API:
         self.debug = False
 
         if not self.api_token:
-            raise ValueError("No YNAB API token found in configuration.")
+            raise ValueError("No YNAB API token found in configuration, upload process skipped.")
 
     def run(self, transaction_data: dict[str, list]) -> None:
         logging.debug(f"Transaction data: {transaction_data}")
