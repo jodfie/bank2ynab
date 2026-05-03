@@ -32,7 +32,10 @@ class YNAB_API:
         # TODO: Fix debug structure, so it will be used in logging instead
         self.debug = False
 
-    def run(self, transaction_data: dict[str, list]):
+        if not self.api_token:
+            raise ValueError("No YNAB API token found in configuration.")
+
+    def run(self, transaction_data: dict[str, list]) -> None:
         logging.debug(f"Transaction data: {transaction_data}")
 
         # get previously-saved budget/account mapping
@@ -91,7 +94,7 @@ class YNAB_API:
             )
         return bank_account_mapping
 
-    def save_account_mappings(self, mapping: dict[str, dict]):
+    def save_account_mappings(self, mapping: dict[str, dict]) -> None:
         for bank_name in mapping:
             # save account selection for bank
             save_ac_toggle = self.config_handler.get_config_line_boo(
@@ -109,7 +112,7 @@ class YNAB_API:
                     " - account match not saved."
                 )
 
-    def save_account_selection(self, bank, budget_id, account_id):
+    def save_account_selection(self, bank, budget_id, account_id) -> None:
         # TODO move config saving to the ConfigHandler class?
         """
         saves YNAB account to use for each bank
@@ -156,7 +159,7 @@ def select_accounts(
             mappings[bank]["account_id"] = account_id
 
 
-def select_account(bank_name: str, budget_info: dict[str, dict]):
+def select_account(bank_name: str, budget_info: dict[str, dict]) -> tuple[str, str]:
     budget_id = ""
     account_id = ""
     instruction = "No YNAB {} for transactions from {} set!\nPick {}"
@@ -180,7 +183,7 @@ def select_account(bank_name: str, budget_info: dict[str, dict]):
     return budget_id, account_id
 
 
-def generate_name_id_list(input_dict: dict):
+def generate_name_id_list(input_dict: dict) -> list[list[str]]:
     output_list = list()
     for id in input_dict.keys():
         output_list.append([input_dict[id]["name"], id])

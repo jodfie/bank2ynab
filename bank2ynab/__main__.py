@@ -30,7 +30,7 @@ def build_bank(bank_config: dict[str, Any]) -> BankHandler:
         return BankHandler(config_dict=bank_config)
 
 
-def main():
+def main() -> None:
     try:
         config_handler = ConfigHandler()
     except FileNotFoundError:
@@ -61,8 +61,13 @@ def main():
         )
 
         if bank_transaction_dict:
-            api = YNAB_API(config_handler)
-            api.run(bank_transaction_dict)
+            try:
+                api = YNAB_API(config_handler)
+                api.run(bank_transaction_dict)
+            except ValueError as e:
+                logging.error(f"{e}")
+
+
 
 
 # Let's run this thing!

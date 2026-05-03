@@ -1,7 +1,8 @@
 import unittest
 from unittest import TestCase
+from unittest.mock import MagicMock, patch
 
-from bank2ynab.ynab_api import apply_mapping, generate_name_id_list
+from bank2ynab.ynab_api import YNAB_API, apply_mapping, generate_name_id_list
 
 
 class TestYNAB_API(TestCase):
@@ -10,6 +11,26 @@ class TestYNAB_API(TestCase):
 
     def tearDown(self) -> None:
         return super().tearDown()
+
+    def _make_config_handler(self, api_token: str | None) -> MagicMock:
+        mock_config = MagicMock()
+        mock_config.get.return_value = api_token
+        handler = MagicMock()
+        handler.config = mock_config
+        return handler
+
+    @patch("bank2ynab.ynab_api.ConfigHandler")
+    def test_init_raises_when_api_token_missing(self, mock_config_handler_cls):
+        mock_config_handler_cls.return_value = self._make_config_handler("")
+        with self.assertRaises(ValueError) as ctx:
+            YNAB_API(config_object=self._make_config_handler(""))
+        self.assertIn("No YNAB API token", str(ctx.exception))
+
+    @patch("bank2ynab.ynab_api.ConfigHandler")
+    def test_init_raises_when_api_token_none(self, mock_config_handler_cls):
+        mock_config_handler_cls.return_value = self._make_config_handler(None)
+        with self.assertRaises(ValueError):
+            YNAB_API(config_object=self._make_config_handler(None))
 
     @unittest.skip("Not tested yet.")
     def test_init(self):
