@@ -16,9 +16,7 @@ class APIInterface:
             budget_dict = get_budgets(api_token=api_token)
             # add accounts dictionary to each budget in dict
             for budget_id in budget_dict.keys():
-                budget_accounts = get_budget_accounts(
-                    api_token=api_token, budget_id=budget_id
-                )
+                budget_accounts = get_budget_accounts(api_token=api_token, budget_id=budget_id)
                 budget_dict[budget_id]["accounts"] = budget_accounts
             self.budget_info = budget_dict
             logging.info("All budget and account data obtained.")
@@ -26,9 +24,7 @@ class APIInterface:
             logging.info("No API-token provided.")
 
 
-def access_api(
-    api_token: str, budget_id: str, keyword: str, method: str, data: dict
-) -> dict:
+def access_api(api_token: str, budget_id: str, keyword: str, method: str, data: dict) -> dict:
     base_url = "https://api.youneedabudget.com/v1/budgets/"
 
     if budget_id == "":
@@ -71,15 +67,12 @@ def api_read(api_token: str, budget_id: str, keyword: str) -> dict:
 
 
 def post_transactions(api_token: str, budget_id: str, data: dict) -> None:
-    """
-    Send transaction data to YNAB via API call
+    """Send transaction data to YNAB via API call.
 
-    :param api_token: API token to access YNAB API
-    :type api_token: str
-    :param budget_id: id of budget to post transactions to
-    :type budget_id: str
-    :param data: transaction data in json format
-    :type data: str
+    Args:
+        api_token: API token to access YNAB API.
+        budget_id: ID of budget to post transactions to.
+        data: Transaction data in JSON format.
     """
 
     logging.info("Uploading transactions to YNAB...")
@@ -102,13 +95,13 @@ def post_transactions(api_token: str, budget_id: str, data: dict) -> None:
 
 
 def fix_id_based_dicts(input_data: dict) -> dict[str, dict]:
-    """
-    Combines response data JSON into a dictionary mapping ID to response data.
+    """Combine response data JSON into a dictionary mapping ID to response data.
 
-    :param input_data: JSON-style dictionary
-    :type input_data: dict
-    :return: dictionary mapping "id" to response data
-    :rtype: dict[str, dict]
+    Args:
+        input_data: JSON-style dictionary.
+
+    Returns:
+        dict[str, dict]: Dictionary mapping "id" to response data.
     """
     output_dict = dict()
     for sub_dict in input_data:
@@ -117,33 +110,29 @@ def fix_id_based_dicts(input_data: dict) -> dict[str, dict]:
 
 
 def get_budget_accounts(api_token: str, budget_id: str) -> dict[str, dict]:
-    """
-    Returns dictionary matching account id to list of account parameters.
+    """Return dictionary matching account id to list of account parameters.
 
-    :param api_token: API token to access YNAB API
-    :type api_token: str
-    :param budget_id: budget ID to read account data from
-    :type budget_id: str
-    :return: dictionary mapping account id to parameters
-    :rtype: dict[str, dict]
+    Args:
+        api_token: API token to access YNAB API.
+        budget_id: Budget ID to read account data from.
+
+    Returns:
+        dict[str, dict]: Dictionary matching account id to parameters.
     """
-    accounts = api_read(
-        api_token=api_token, budget_id=budget_id, keyword="accounts"
-    )
+    accounts = api_read(api_token=api_token, budget_id=budget_id, keyword="accounts")
     return fix_id_based_dicts(accounts)
 
 
 def get_budgets(
     api_token: str,
 ) -> dict[str, dict]:
-    """
-    Returns dictionary matching budget id to list of budget parameters.
+    """Return dictionary matching budget id to list of budget parameters.
 
-    :param api_token: API token to access YNAB API
-    :type api_token: str
-    :return: dictionary mapping budget id to parameters
-    :rtype: dict[str, dict[str, str]]
+    Args:
+        api_token: API token to access YNAB API.
+
+    Returns:
+        dict[str, dict[str, str]]: Dictionary matching budget id to parameters.
     """
     budgets = api_read(api_token=api_token, budget_id="", keyword="budgets")
-    return fix_id_based_dicts(budgets)
     return fix_id_based_dicts(budgets)

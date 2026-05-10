@@ -1,30 +1,36 @@
 # Plugin for handling format of Handelsbanken [SE] bank export files
-"""
-        Strip HTML from input file, allowing it to be used by main script
-        With thanks to @joacand's script from here:
-        github.com/joacand/HandelsbankenYNABConverter/blob/master/Converter.py
+"""Strip HTML from input file, allowing it to be used by the main script.
+
+With thanks to @joacand's script:
+github.com/joacand/HandelsbankenYNABConverter/blob/master/Converter.py
 """
 
 import re
 import typing
 
 from ..bank_handler import BankHandler
+from ..config_handler import BankConfig
 
 
 class Handelsbanken(BankHandler):
-    def __init__(self, config_dict: dict[str, typing.Any]):
+    def __init__(self, bank_config: BankConfig) -> None:
+        """Initialise Handelsbanken bank handler.
+
+        Args:
+            bank_config: A BankConfig instance containing conf parameters.
         """
-        :param config_dict: a dictionary of conf parameters
-        """
-        super().__init__(config_dict)
+        super().__init__(bank_config)
         self.name = "Handelsbanken"
 
-    def _preprocess_file(
-        self, file_path: str, plugin_args: list[typing.Any]
-    ) -> str:
-        """
-        Strips HTML from input file, modifying the input file directly
-        :param file_path: path to file
+    def _preprocess_file(self, file_path: str, plugin_args: list[typing.Any]) -> str:
+        """Strip HTML from input file, modifying the input file directly.
+
+        Args:
+            file_path: Path to file.
+            plugin_args: Plugin-specific arguments (unused).
+
+        Returns:
+            str: Path to the modified file.
         """
         with open(file_path) as input_file:
             output_rows: list[list[str]] = list()
@@ -50,12 +56,13 @@ class Handelsbanken(BankHandler):
         return file_path
 
 
-def build_bank(config: dict[str, typing.Any]) -> BankHandler:
-    """This factory function is called from the main program,
-    and expected to return a BankHandler subclass.
-    Without this, the module will fail to load properly.
+def build_bank(config: BankConfig) -> BankHandler:
+    """Return a Handelsbanken instance for a given bank configuration.
 
-    :param config: dict containing all available configuration parameters
-    :return: a BankHandler subclass instance
+    Args:
+        config: Dict containing all available configuration parameters.
+
+    Returns:
+        Handelsbanken: A BankHandler subclass instance.
     """
     return Handelsbanken(config)

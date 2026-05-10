@@ -1,6 +1,4 @@
-"""
-Plugin that uses information from the memo field to fill in other fields
-"""
+"""Plugin that uses information from the memo field to fill in other fields."""
 
 # Usage:
 # Ensure the relevant bank config has a Memo Parser config attribute
@@ -18,6 +16,7 @@ import re
 from datetime import datetime
 
 from ..bank_handler import BankHandler, get_output_path
+from ..config_handler import BankConfig
 from ..dataframe_handler import read_csv
 from ..transactionfile_reader import detect_encoding
 
@@ -25,15 +24,17 @@ logging.basicConfig(format="%(levelname)s: %(message)s", level=logging.DEBUG)
 
 
 class ParseFromMemo(BankHandler):
-    def __init__(self, config_object):
+    def __init__(self, config: BankConfig):
+        """Initialise ParseFromMemo bank handler.
+
+        Args:
+            config: Bank configuration parameters.
         """
-        :param config_object: a dictionary of conf parameters
-        """
-        super().__init__(config_object)
+        super().__init__(config)
 
         # Parsers from the Config, skipping blank rows
         memo_parsers = list(
-            filter(len, self.config_dict.get("plugin_args", []))
+            filter(len, self.config.plugin_args)
         )
         if len(memo_parsers) <= 0:
             raise AttributeError(
@@ -44,15 +45,21 @@ class ParseFromMemo(BankHandler):
         )
 
     def _preprocess_file(self, file_path: str, plugin_args: list) -> str:
-        """
-        Override the memo, date and payee columns with information read from the memo field
+        """Override memo, date, and payee columns with information from the memo field.
+
+        Args:
+            file_path: Path to file.
+            plugin_args: Plugin-specific arguments (unused, parsers are read from config).
+
+        Returns:
+            str: Path to the modified output file.
         """
 
         # Read in the old CSV
         src_encod = detect_encoding(file_path)
         df = read_csv(
             file_path=file_path,
-            delim=self.config_dict.get("input_delimiter", ","),
+            delim=self.config.input_delimiter,
             header_rows=0,
             footer_rows=0,
             encod=src_encod,
@@ -64,7 +71,7 @@ class ParseFromMemo(BankHandler):
         # Generate output path
         new_path = get_output_path(
             input_path=file_path,
-            prefix=f"memo_parsed_csv_{self.config_dict['bank_name']}_",
+            prefix=f"memo_parsed_csv_{self.config.bank_name}_",
             ext=".csv",
         )
 
@@ -74,13 +81,13 @@ class ParseFromMemo(BankHandler):
             index=False,  # no row names (just ints)
             header=False,  # no column names (just ints)
             encoding=src_encod,
-            sep=self.config_dict.get("input_delimiter", ","),
+            sep=self.config.input_delimiter,
         )
 
         return new_path
 
     def _parse_from_memo(self, row):
-        memo_index = self.config_dict["input_columns"].index("Memo")
+        memo_index = self.config.input_columns.index("Memo")
         original_memo = row[memo_index]
 
         # Try to match all known parsers against the memo
@@ -112,14 +119,14 @@ class ParseFromMemo(BankHandler):
             # Fields that mutate the date
             try:
                 if len(match["date"]):
-                    date_col = self.config_dict["input_columns"].index("Date")
+                    date_col = self.config.input_columns.index("Date")
                     try:
                         input_date = datetime.strptime(
                             match["date"], "%d-%m-%Y"
                         )
                         new_date = datetime.strftime(
                             input_date,
-                            self.config_dict.get("date_format", "%Y-%m-%d"),
+                            self.config.date_format,
                         )
 
                         row[date_col] = new_date
@@ -131,9 +138,7 @@ class ParseFromMemo(BankHandler):
             # Field that mutate the payee
             try:
                 if len(match["payee"]):
-                    payee_index = self.config_dict["input_columns"].index(
-                        "Payee"
-                    )
+                    payee_index = self.config.input_columns.index("Payee")
 
                     row[payee_index] = match["payee"]
             except IndexError:

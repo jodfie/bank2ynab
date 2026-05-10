@@ -4,26 +4,28 @@ from pandas import read_excel
 
 from .. import bank_handler
 from ..bank_handler import BankHandler
+from ..config_handler import BankConfig
 
 
 class XLS_Converter(BankHandler):
-    def __init__(self, config_object: dict):
+    def __init__(self, bank_config: BankConfig) -> None:
+        """Initialise XLS converter with bank configuration.
+
+        Args:
+            bank_config: A BankConfig instance containing conf parameters.
         """
-        :param config_object: a dictionary of conf parameters
-        """
-        super().__init__(config_object)
-        self.config = config_object
+        super().__init__(bank_config)
+        self.config = bank_config
 
     def _preprocess_file(self, file_path: str, plugin_args: list) -> str:
-        """
-        Combines all tables in a XLS file into one table and writes to CSV.
+        """Combine all tables in an XLS file into one table and write to CSV.
 
-        :param file_path: path to XLS file
-        :type file_path: str
-        :param plugin_args: plugin arguments (unused in this plugin)
-        :type plugin_args: list
-        :return: path to CSV file
-        :rtype: str
+        Args:
+            file_path: Path to XLS file.
+            plugin_args: Plugin arguments (unused in this plugin).
+
+        Returns:
+            str: Path to CSV file.
         """
         logging.info("Converting XLS file...")
 
@@ -32,7 +34,7 @@ class XLS_Converter(BankHandler):
         # generate output path
         new_path = bank_handler.get_output_path(
             input_path=file_path,
-            prefix=f"Converted XLS_{self.config['bank_name']}_",
+            prefix=f"Converted XLS_{self.config.bank_name}_",
             ext=".csv",
         )
         # write the dataframe to output file
@@ -41,12 +43,13 @@ class XLS_Converter(BankHandler):
         return new_path
 
 
-def build_bank(config):
-    """This factory function is called from the main program,
-    and expected to return a BankHandler subclass.
-    Without this, the module will fail to load properly.
+def build_bank(config) -> XLS_Converter:
+    """Return an XLS_Converter instance for a given bank configuration.
 
-    :param config: dict containing all available configuration parameters
-    :return: a BankHandler subclass instance
+    Args:
+        config: A BankConfig instance containing conf parameters.
+
+    Returns:
+        XLS_Converter: A BankHandler subclass instance.
     """
     return XLS_Converter(config)
