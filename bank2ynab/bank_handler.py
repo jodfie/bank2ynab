@@ -3,14 +3,28 @@ import logging
 import os
 import traceback
 from os import path
-from typing import Any
+from typing import Any, Protocol, runtime_checkable
 
 from . import dataframe_handler, transactionfile_reader
 from .config_handler import BankConfig
-from .dataframe_handler import DataframeHandler
+from .dataframe_handler import CSVTransactionSource, DataframeHandler
 
 
-# TODO - there's a lot of overlap between BankHandler and BankConfig, review the division of responsibilities between these two classes and refactor if necessary
+@runtime_checkable
+class BankPlugin(Protocol):
+    """Protocol that every plugin-loaded bank handler must satisfy.
+
+    ``build_bank()`` in a plugin module returns a ``BankHandler`` subclass;
+    at load time ``bank_handler.build_bank()`` validates the returned object
+    against this Protocol so failures surface immediately rather than at
+    first use.
+    """
+
+    def _preprocess_file(self, file_path: str, plugin_args: list[Any]) -> str: ...
+
+
+# TODO - there's a lot of overlap between BankHandler and BankConfig,
+# review the division of responsibilities and refactor if necessary
 class BankHandler:
     """Handle the flow for data input, parsing, and data output for a given bank configuration."""
 
@@ -49,25 +63,15 @@ class BankHandler:
                 src_encod = transactionfile_reader.detect_encoding(src_file)
                 # create our base dataframe
 
-                df_handler = DataframeHandler()
-                df_handler.run(
+                source = CSVTransactionSource(
                     file_path=src_file,
                     delim=self.config.input_delimiter,
                     header_rows=self.config.header_rows,
                     footer_rows=self.config.footer_rows,
                     encod=src_encod,
-                    input_columns=self.config.input_columns,
-                    output_columns=self.config.output_columns,
-                    api_columns=self.config.api_columns,
-                    cd_flags=self.config.cd_flags,
-                    date_format=self.config.date_format,
-                    date_dedupe=self.config.date_dedupe,
-                    fill_memo=self.config.payee_to_memo,
-                    currency_fix=self.config.currency_mult,
-                    payee_mappings=self.config.payee_mappings,
-                    clean_payee=self.config.clean_payee,
-                    clean_memo=self.config.clean_memo,
                 )
+                df_handler = DataframeHandler()
+                df_handler.run(source=source, config=self.config)
 
                 self.files_processed += 1
             except ValueError as e:
@@ -153,12 +157,17 @@ def build_bank(bank_config: BankConfig) -> BankHandler:
     if plugin_module_name:
         module = importlib.import_module(f".plugins.{plugin_module_name}", package="bank2ynab")
         if not hasattr(module, "build_bank"):
-            s = (
+            raise ImportError(
                 f"The specified plugin {plugin_module_name}.py "
                 "does not contain the required build_bank(config) method."
             )
-            raise ImportError(s)
         bank = module.build_bank(bank_config)
+        if not isinstance(bank, BankPlugin):
+            raise ImportError(
+                f"Plugin {plugin_module_name} returned an object that does "
+                "not implement the BankPlugin protocol "
+                "(_preprocess_file is required)."
+            )
         return bank
     else:
         return BankHandler(config=bank_config)
