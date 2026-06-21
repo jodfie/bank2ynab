@@ -85,10 +85,7 @@ def find_directory(filepath: str) -> str:
             # Windows
             import winreg
 
-            shell_path = (
-                "SOFTWARE\\Microsoft\\Windows\\CurrentVersion"
-                "\\Explorer\\Shell Folders"
-            )
+            shell_path = "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders"
             dl_key = "{374DE290-123F-4565-9164-39C4925E467B}"
             with winreg.OpenKey(winreg.HKEY_CURRENT_USER, shell_path) as key:
                 input_dir = winreg.QueryValueEx(key, dl_key)[0]
@@ -121,9 +118,7 @@ def detect_encoding(filepath: str) -> str:
         rslt = chardet.detect(file_content)
         conf, enc = rslt["confidence"], rslt["encoding"]
         if conf > 0.6:
-            logging.info(
-                f"\tOpening file using encoding {enc} (confidence {conf})"
-            )
+            logging.info(f"\tOpening file using encoding {enc} (confidence {conf})")
             if enc:
                 return enc
 

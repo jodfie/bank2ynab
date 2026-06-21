@@ -33,9 +33,7 @@ class ParseFromMemo(BankHandler):
         super().__init__(config)
 
         # Parsers from the Config, skipping blank rows
-        memo_parsers = list(
-            filter(len, self.config.plugin_args)
-        )
+        memo_parsers = list(filter(len, self.config.plugin_args))
         if len(memo_parsers) <= 0:
             raise AttributeError(
                 "The plugin arguments option contained no regular expresions to use for parsing"
@@ -121,9 +119,7 @@ class ParseFromMemo(BankHandler):
                 if len(match["date"]):
                     date_col = self.config.input_columns.index("Date")
                     try:
-                        input_date = datetime.strptime(
-                            match["date"], "%d-%m-%Y"
-                        )
+                        input_date = datetime.strptime(match["date"], "%d-%m-%Y")
                         new_date = datetime.strftime(
                             input_date,
                             self.config.date_format,

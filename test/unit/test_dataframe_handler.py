@@ -9,7 +9,6 @@ from pandas._libs.missing import NA
 
 from bank2ynab.dataframe_handler import (
     add_missing_columns,
-    read_csv,
     apply_payee_mappings,
     auto_memo,
     auto_payee,
@@ -22,6 +21,7 @@ from bank2ynab.dataframe_handler import (
     fix_amount,
     fix_date,
     merge_duplicate_columns,
+    read_csv,
     remove_invalid_rows,
 )
 
@@ -92,7 +92,7 @@ class TestDataframeHandler(TestCase):
                     "Memo": ["four", "three", "two", "one"],
                 },
                 "input_cols": ["Amount", "Payee", "Payee"],
-                "desired_column_output":["four four", "three three", "two two", "one one"],
+                "desired_column_output": ["four four", "three three", "two two", "one one"],
                 "desired_output": ["Amount", "Payee", "Payee 0"],
                 "merged_column": "Payee",
             },
@@ -122,10 +122,7 @@ class TestDataframeHandler(TestCase):
                     test["desired_output"],
                     list(test_df),
                 )
-                self.assertCountEqual(
-                    test["desired_column_output"],
-                    test_df[test["merged_column"]]
-                )
+                self.assertCountEqual(test["desired_column_output"], test_df[test["merged_column"]])
 
     def test_add_missing_columns(self):
         """Check that adding missing columns works correctly."""
@@ -137,12 +134,12 @@ class TestDataframeHandler(TestCase):
             {},
         ]
         for dataset in test_datasets:
-            with self.subTest(
-                "Test different amount of missing columns.", dataset=dataset
-            ):
+            with self.subTest("Test different amount of missing columns.", dataset=dataset):
                 test_df = pd.DataFrame(dataset)
                 test_df = add_missing_columns(
-                    test_df, list(test_df), desired_cols  # type: ignore
+                    test_df,
+                    list(test_df),
+                    desired_cols,  # type: ignore
                 )
                 # check if column names contain all desired values
                 self.assertCountEqual(desired_cols, list(test_df))
@@ -173,22 +170,16 @@ class TestDataframeHandler(TestCase):
         ]
 
         for dataset in test_data:
-            with self.subTest(
-                "Test different input/output flag scenarios.", dataset=dataset
-            ):
+            with self.subTest("Test different input/output flag scenarios.", dataset=dataset):
                 test_df = pd.DataFrame(dataset["data"])
                 test_df = cd_flag_process(test_df, dataset["cd_flags"])
-                self.assertEqual(
-                    dataset["target_inflow"], test_df["Inflow"].iloc[0]
-                )
+                self.assertEqual(dataset["target_inflow"], test_df["Inflow"].iloc[0])
 
     def test_fix_amount(self):
         """
         Test fixing of negative inflows/outflows & amount column creation.
         """
-        initial_df = pd.DataFrame(
-            {"Inflow": [10, -20, 0, 0, 0], "Outflow": [0, 0, -100, 0, 0]}
-        )
+        initial_df = pd.DataFrame({"Inflow": [10, -20, 0, 0, 0], "Outflow": [0, 0, -100, 0, 0]})
         test_df = fix_amount(initial_df, 1)
         desired_output = pd.DataFrame(
             {
@@ -212,9 +203,7 @@ class TestDataframeHandler(TestCase):
 
     def test_currency_fix(self):
         """Test currency conversion."""
-        initial_df = pd.DataFrame(
-            {"Inflow": [10, -20, 0, 0, 0], "Outflow": [0, 0, -100, 0, 0]}
-        )
+        initial_df = pd.DataFrame({"Inflow": [10, -20, 0, 0, 0], "Outflow": [0, 0, -100, 0, 0]})
         test_df = fix_amount(initial_df, 4)
         desired_output = pd.DataFrame(
             {
@@ -390,9 +379,7 @@ class TestDataframeHandler(TestCase):
             ],
         ]
         for test in test_strings:
-            with self.subTest(
-                "Test different types of string input.", test=test
-            ):
+            with self.subTest("Test different types of string input.", test=test):
                 test_series = pd.Series(data={1: test[0]})
                 desired_output = pd.Series(data={1: test[1]})
                 test_output = clean_strings(test_series)
@@ -465,9 +452,7 @@ class TestDataframeHandler(TestCase):
         for test in test_params:
             with self.subTest(test=test):
                 result = fix_date(pd.Series(data=test["data"]), test["date_format"])
-                pandas.testing.assert_series_equal(
-                    pd.Series(data=test["expected"]), result
-                )
+                pandas.testing.assert_series_equal(pd.Series(data=test["expected"]), result)
 
     def test_fix_date_mixed_format(self):
         """fix_date parses a column where some rows have a time component."""
@@ -512,9 +497,7 @@ class TestDataframeHandler(TestCase):
             }
         )
 
-        pandas.testing.assert_series_equal(
-            test_series, fill_empty_dates(test_series, False)
-        )
+        pandas.testing.assert_series_equal(test_series, fill_empty_dates(test_series, False))
         pandas.testing.assert_series_equal(
             target_filled_series, fill_empty_dates(test_series, True)
         )
@@ -614,9 +597,7 @@ class TestDataframeHandler(TestCase):
     def test_apply_payee_mappings_first_match_wins(self):
         """First matching mapping wins when multiple keys match."""
         df = pd.DataFrame({"Payee": ["PAYPAL AMAZON"]})
-        result = apply_payee_mappings(
-            df, {"PAYPAL": "PayPal", "AMAZON": "Amazon"}
-        )
+        result = apply_payee_mappings(df, {"PAYPAL": "PayPal", "AMAZON": "Amazon"})
         self.assertEqual(result["Payee"].iloc[0], "PayPal")
 
     def test_apply_payee_mappings_empty(self):

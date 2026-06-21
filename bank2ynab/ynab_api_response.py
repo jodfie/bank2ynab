@@ -6,9 +6,7 @@ RESPONSE_CODES = {
     "401": "API access token missing, invalid, revoked, or expired.",
     "403.1": "The subscription for this account has lapsed.",
     "403.2": "The trial for this account has expired.",
-    "403.3": (
-        "The supplied access token has a scope which does not allow access."
-    ),
+    "403.3": ("The supplied access token has a scope which does not allow access."),
     "403.4": (
         "The request will exceed one or more data limits in place to prevent"
         " abuse. Generally means the API request was too large for"
@@ -28,8 +26,7 @@ RESPONSE_CODES = {
         " Please see the Rate Limiting section of the YNAB API documentation. "
     ),
     "500": (
-        "Unexpected error. This error will be returned if the API experiences"
-        " an unexpected error."
+        "Unexpected error. This error will be returned if the API experiences an unexpected error."
     ),
     "503": (
         "Service unavailable. This error will be returned if we have"
@@ -42,8 +39,7 @@ RESPONSE_CODES = {
 class YNABError(Exception):
     def __init__(self, response_code: str, detail: str):
         message = (
-            f"Error {response_code} -"
-            f" {RESPONSE_CODES[response_code]} ({detail.capitalize()})."
+            f"Error {response_code} - {RESPONSE_CODES[response_code]} ({detail.capitalize()})."
         )
         super().__init__(message)
         self.response_code = response_code

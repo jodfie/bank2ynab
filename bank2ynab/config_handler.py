@@ -65,15 +65,11 @@ class ConfigHandler:
     def _ensure_config_dir_exists(self) -> None:
         self.config_dir.mkdir(parents=True, exist_ok=True)
 
-    def _copy_default_if_missing(
-        self, target_path: Path, packaged_file_name: str
-    ) -> None:
+    def _copy_default_if_missing(self, target_path: Path, packaged_file_name: str) -> None:
         if target_path.exists():
             return
         self._ensure_config_dir_exists()
-        packaged_path = resources.files("bank2ynab.data").joinpath(
-            packaged_file_name
-        )
+        packaged_path = resources.files("bank2ynab.data").joinpath(packaged_file_name)
         with resources.as_file(packaged_path) as source_path:
             shutil.copyfile(str(source_path), str(target_path))
 
@@ -84,9 +80,7 @@ class ConfigHandler:
 
     def _resolve_user_conf_path(self) -> Path:
         target_path = self.config_dir / "user_configuration.conf"
-        self._copy_default_if_missing(
-            target_path, "user_configuration.conf.template"
-        )
+        self._copy_default_if_missing(target_path, "user_configuration.conf.template")
         return target_path
 
     def get_configs(self) -> configparser.RawConfigParser:
@@ -206,9 +200,7 @@ class ConfigHandler:
         """
         return self.config.getboolean(section_name, param)
 
-    def get_config_line_lst(
-        self, section_name: str, param: str, splitter: str
-    ) -> list[typing.Any]:
+    def get_config_line_lst(self, section_name: str, param: str, splitter: str) -> list[typing.Any]:
         """Returns a list value from a given section in the config object.
 
         Args:

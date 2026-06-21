@@ -204,9 +204,7 @@ def parse_data(
     return df
 
 
-def apply_payee_mappings(
-    df: pd.DataFrame, payee_mappings: dict[str, str]
-) -> pd.DataFrame:
+def apply_payee_mappings(df: pd.DataFrame, payee_mappings: dict[str, str]) -> pd.DataFrame:
     """Replace raw payee strings with friendly names from a mapping dict.
 
     Matching is case-insensitive substring; first match wins.
@@ -233,9 +231,7 @@ def apply_payee_mappings(
     return df
 
 
-def merge_duplicate_columns(
-    df: pd.DataFrame, input_columns: list[str]
-) -> pd.DataFrame:
+def merge_duplicate_columns(df: pd.DataFrame, input_columns: list[str]) -> pd.DataFrame:
     """Merge columns specified more than once in the input_columns list.
 
     Converts values into strings before merging.
@@ -262,9 +258,7 @@ def merge_duplicate_columns(
             if key in {"Inflow", "Outflow"}:
                 # merge numerically using fillna to preserve float dtype
                 for dupe_count, key_col in enumerate(key_cols[1:]):
-                    df.iloc[:, key_cols[0]] = df.iloc[:, key_cols[0]].fillna(
-                        df.iloc[:, key_col]
-                    )
+                    df.iloc[:, key_cols[0]] = df.iloc[:, key_cols[0]].fillna(df.iloc[:, key_col])
                     df.columns.values[key_col] = f"{key} {dupe_count}"
             else:
                 # build the merged values separately, then replace the column in one
@@ -273,17 +267,11 @@ def merge_duplicate_columns(
                 # merge every duplicate column into the 1st instance
                 # of the column name
                 for dupe_count, key_col in enumerate(key_cols[1:]):
-                    merged_col = (
-                        merged_col
-                        + " "
-                        + df.iloc[:, key_col].fillna("").astype(str)
-                    )
+                    merged_col = merged_col + " " + df.iloc[:, key_col].fillna("").astype(str)
                     df.columns.values[key_col] = f"{key} {dupe_count}"
                 df.isetitem(
                     key_cols[0],
-                    merged_col.str.replace(
-                        "\\s{2,}", " ", regex=True
-                    ).str.strip().to_numpy(),
+                    merged_col.str.replace("\\s{2,}", " ", regex=True).str.strip().to_numpy(),
                 )
 
     logging.debug(f"\nAfter duplicate merge\n{df.head()}")
@@ -405,9 +393,7 @@ def remove_invalid_rows(df: pd.DataFrame) -> pd.DataFrame:
     df.query("Inflow.notna() | Outflow.notna()", inplace=True)
     # filter rows with an invalid date
     df.query("Date.notna()", inplace=True)
-    df[["Inflow", "Outflow", "amount"]] = df[
-        ["Inflow", "Outflow", "amount"]
-    ].fillna(0)
+    df[["Inflow", "Outflow", "amount"]] = df[["Inflow", "Outflow", "amount"]].fillna(0)
     df = df.loc[df["amount"].fillna(0) != 0].copy()
     df.reset_index(inplace=True)
     return df
@@ -454,19 +440,13 @@ def clean_strings(string_series: pd.Series) -> pd.Series:
     # convert string to title case
     modified_string_series = modified_string_series.str.title()
     # remove non-alphanumeric
-    modified_string_series = modified_string_series.replace(
-        r"[^\w\d ]", " ", regex=True
-    )
+    modified_string_series = modified_string_series.replace(r"[^\w\d ]", " ", regex=True)
     # remove newline characters
-    modified_string_series = modified_string_series.str.replace(
-        "\n", " ", regex=True
-    )
+    modified_string_series = modified_string_series.str.replace("\n", " ", regex=True)
     # strip leading and trailing whitespace
     modified_string_series = modified_string_series.str.strip()
     # replace multiple spacing with single
-    modified_string_series = modified_string_series.str.replace(
-        " +", " ", regex=True
-    )
+    modified_string_series = modified_string_series.str.replace(" +", " ", regex=True)
     return modified_string_series
 
 
@@ -494,9 +474,7 @@ def fix_date(date_series: pd.Series, date_format: str) -> pd.Series:
     format_has_time = any(code in date_format for code in _time_codes)
 
     if not format_has_time:
-        failed = result.isna() & date_series.notna() & (
-            date_series.astype(str).str.strip() != ""
-        )
+        failed = result.isna() & date_series.notna() & (date_series.astype(str).str.strip() != "")
         if failed.any():
             retry = pd.to_datetime(
                 date_series[failed],
@@ -552,13 +530,9 @@ def fill_api_columns(df: pd.DataFrame) -> pd.DataFrame:
 
     # import_id format = YNAB:amount:ISO-date:occurrences
     # Maximum 36 characters ("YNAB" + ISO-date = 10 characters)
-    df["import_id"] = df.agg(
-        lambda x: f"YNAB:{x['amount']}:{x['date']}:", axis=1
-    )
+    df["import_id"] = df.agg(lambda x: f"YNAB:{x['amount']}:{x['date']}:", axis=1)
     # count every instance of import id & add a counter to id
-    df["same_id_count"] = (df.groupby(["import_id"]).cumcount() + 1).astype(
-        str
-    )
+    df["same_id_count"] = (df.groupby(["import_id"]).cumcount() + 1).astype(str)
     df["import_id"] = df["import_id"] + df["same_id_count"]
     # move import_id to the end
     cols = list(df.columns.values)

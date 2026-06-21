@@ -16,7 +16,7 @@ class FixLineBreaksPlugin(BankHandler):
         """
 
         # Open the source file for reading
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             # Read the contents of the file
             file_contents = f.read()
 

@@ -39,11 +39,7 @@ class TestConfigHandlerPaths(unittest.TestCase):
             handler = ConfigHandler()
             user_conf = Path(handler.user_conf_path)
             user_conf.write_text(
-                "[Test Bank]\n"
-                "\n"
-                "[Test Bank payee_mappings]\n"
-                "PAYPAL = PayPal\n"
-                "AMAZON = Amazon\n",
+                "[Test Bank]\n\n[Test Bank payee_mappings]\nPAYPAL = PayPal\nAMAZON = Amazon\n",
                 encoding="utf-8",
             )
             handler = ConfigHandler()

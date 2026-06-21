@@ -15,15 +15,11 @@ class YNAB_API:
     Note: Be careful not to accidentally share the API access token.
     """
 
-    def __init__(
-        self, config_object: ConfigHandler, transactions=None
-    ) -> None:
+    def __init__(self, config_object: ConfigHandler, transactions=None) -> None:
         self.transactions = []
         self.budget_id = None
         self.config_handler = config_object
-        self.api_token = self.config_handler.config.get(
-            "DEFAULT", "YNAB API Access Token"
-        )
+        self.api_token = self.config_handler.config.get("DEFAULT", "YNAB API Access Token")
 
         self.user_config_handler = ConfigHandler(user_mode=True)
         self.user_config = self.user_config_handler.config
@@ -52,9 +48,7 @@ class YNAB_API:
         # save account mappings
         self.save_account_mappings(bank_account_mapping)
         # map transactions to budget and account IDs
-        budget_transactions = apply_mapping(
-            transaction_data, bank_account_mapping
-        )
+        budget_transactions = apply_mapping(transaction_data, bank_account_mapping)
 
         for budget_id in budget_info:
             try:
@@ -64,10 +58,7 @@ class YNAB_API:
                     data=budget_transactions[budget_id],
                 )
             except KeyError:
-                logging.info(
-                    "No transactions to upload for"
-                    f" {budget_info[budget_id]['name']}."
-                )
+                logging.info(f"No transactions to upload for {budget_info[budget_id]['name']}.")
 
     def get_saved_accounts(self, t_data: dict) -> dict[str, dict[str, str]]:
         bank_account_mapping = dict()
@@ -81,9 +72,7 @@ class YNAB_API:
                 )
                 budget_id = config_line[0]
                 account_id = config_line[1]
-                logging.info(
-                    f"Previously-saved account for {bank_name} found."
-                )
+                logging.info(f"Previously-saved account for {bank_name} found.")
             except IndexError:
                 pass
             except NoSectionError:
@@ -97,9 +86,7 @@ class YNAB_API:
     def save_account_mappings(self, mapping: dict[str, dict]) -> None:
         for bank_name in mapping:
             # save account selection for bank
-            save_ac_toggle = self.config_handler.get_config_line_boo(
-                bank_name, "Save YNAB Account"
-            )
+            save_ac_toggle = self.config_handler.get_config_line_boo(bank_name, "Save YNAB Account")
             if save_ac_toggle is True:
                 self.save_account_selection(
                     bank_name,
@@ -121,9 +108,7 @@ class YNAB_API:
             logging.info(f"Saving default account for {bank}...")
         except DuplicateSectionError:
             pass
-        self.user_config.set(
-            bank, "YNAB Account ID", f"{budget_id}||{account_id}"
-        )
+        self.user_config.set(bank, "YNAB Account ID", f"{budget_id}||{account_id}")
 
         with open(self.user_config_path, "w", encoding="utf-8") as config_file:
             self.user_config.write(config_file)
@@ -146,9 +131,7 @@ def remove_invalid_accounts(
     return temp_mapping
 
 
-def select_accounts(
-    mappings: dict[str, dict[str, str]], budget_info: dict[str, dict]
-):
+def select_accounts(mappings: dict[str, dict[str, str]], budget_info: dict[str, dict]):
     for bank in mappings.keys():
         if mappings[bank]["account_id"] == "":
             # get the budget ID and Account ID to write to
@@ -216,12 +199,8 @@ def apply_mapping(
             transaction["account_id"] = account_id
         # add transaction list into entry for relevant budget
         if budget_id in budget_transaction_dict:
-            budget_transaction_dict[budget_id]["transactions"] += (
-                account_transactions
-            )
+            budget_transaction_dict[budget_id]["transactions"] += account_transactions
         else:
-            budget_transaction_dict.setdefault(
-                budget_id, {"transactions": account_transactions}
-            )
+            budget_transaction_dict.setdefault(budget_id, {"transactions": account_transactions})
 
     return budget_transaction_dict
