@@ -371,6 +371,7 @@ def _parse_monetary_string(value: object) -> float:
     # normalise thousands/decimal separators: convert commas to periods, then
     # remove all but the last period so "1.234.567,89" → "1234567.89"
     s = s.replace(",", ".")
+    s = s.replace("−", "-")
     parts = s.split(".")
     if len(parts) > 2:
         s = "".join(parts[:-1]) + "." + parts[-1]

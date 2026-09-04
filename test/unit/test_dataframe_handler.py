@@ -239,6 +239,7 @@ class TestDataframeHandler(TestCase):
                 "h": "0",
                 "i": "+40",
                 "j": "-30.30",
+                "k": "−101",
             }
         )
         desired_output = pd.Series(
@@ -253,6 +254,7 @@ class TestDataframeHandler(TestCase):
                 "h": 0,
                 "i": 40,
                 "j": -30.30,
+                "k": -101,
             }
         )
         test_data = clean_monetary_values(initial_data)
